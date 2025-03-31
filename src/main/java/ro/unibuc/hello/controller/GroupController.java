@@ -19,6 +19,12 @@ public class GroupController {
         this.groupService = groupService;
     }
 
+    @GetMapping
+    public ResponseEntity<?> getAllGroups() {
+        return ResponseEntity.ok(groupService.getAllGroups());
+    }
+
+
     @GetMapping("/{id}")
     public ResponseEntity<Group> getGroup(@PathVariable("id") String id,
                                           @RequestHeader("Authorization") String authHeader) {
