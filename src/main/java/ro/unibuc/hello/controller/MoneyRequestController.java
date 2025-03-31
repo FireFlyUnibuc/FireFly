@@ -1,7 +1,10 @@
 package ro.unibuc.hello.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
 import ro.unibuc.hello.entity.MoneyRequest;
 import ro.unibuc.hello.service.MoneyRequestService;
 
@@ -25,12 +28,12 @@ public class MoneyRequestController {
     }
 
     @GetMapping("/{id}")
-    public Optional<MoneyRequest> getRequestById(@PathVariable String id) {
+    public Optional<MoneyRequest> getRequestById(@PathVariable("id") String id) {
         return moneyRequestService.getRequestById(id);
     }
 
     @GetMapping("/user/{toAccountId}")
-    public List<MoneyRequest> getRequestsForUser(@PathVariable String toAccountId) {
+    public List<MoneyRequest> getRequestsForUser(@PathVariable("toAccountId") String toAccountId) {
         return moneyRequestService.getRequestsForUser(toAccountId);
     }
 
@@ -40,11 +43,11 @@ public class MoneyRequestController {
     }
 
     @PutMapping("/{id}/status")
-    public MoneyRequest updateRequestStatus(@PathVariable String id, @RequestParam String status) {
+    public MoneyRequest updateRequestStatus(@PathVariable("id") String id,
+                                            @RequestParam("status") String status) {
         if (!status.equals("APPROVED") && !status.equals("DECLINED")) {
-            throw new IllegalArgumentException("Bank account not found.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid status value.");
         }
         return moneyRequestService.updateRequestStatus(id, status);
     }
-
 }

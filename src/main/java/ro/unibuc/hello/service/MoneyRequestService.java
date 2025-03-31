@@ -1,7 +1,10 @@
 package ro.unibuc.hello.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
 import ro.unibuc.hello.entity.MoneyRequest;
 import ro.unibuc.hello.entity.Transaction;
 import ro.unibuc.hello.entity.BankAccount;
@@ -46,16 +49,21 @@ public class MoneyRequestService {
         return moneyRequestRepository.save(request);
     }
 
+    public void deleteAllRequests() {
+        moneyRequestRepository.deleteAll();
+    }    
+
     public MoneyRequest updateRequestStatus(String requestId, String status) {
         Optional<MoneyRequest> existingRequest = moneyRequestRepository.findById(requestId);
         if (existingRequest.isEmpty()) {
-            throw new IllegalArgumentException("Request not found");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Request not found.");
+
         }
 
         MoneyRequest request = existingRequest.get();
 
         if (!request.getStatus().equals("PENDING")) {
-            throw new IllegalArgumentException("Money request is already processed.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bank account not found.");
         }
 
         request.setStatus(status);
@@ -65,7 +73,7 @@ public class MoneyRequestService {
         Optional<BankAccount> receiverAccountOpt = bankAccountRepository.findById(request.getFromAccountId());
 
         if (senderAccountOpt.isEmpty() || receiverAccountOpt.isEmpty()) {
-            throw new IllegalArgumentException("Bank account not found.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bank account not found.");
         }
 
         BankAccount senderAccount = senderAccountOpt.get();  

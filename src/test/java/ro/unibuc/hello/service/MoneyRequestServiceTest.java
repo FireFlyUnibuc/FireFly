@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.web.server.ResponseStatusException;
 
 import ro.unibuc.hello.entity.BankAccount;
 import ro.unibuc.hello.entity.MoneyRequest;
@@ -133,7 +134,7 @@ public class MoneyRequestServiceTest {
         MoneyRequest request = new MoneyRequest("1", "fromId", "toId", 50.0, "APPROVED");
         when(moneyRequestRepository.findById("1")).thenReturn(Optional.of(request));
 
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+        Exception exception = assertThrows(ResponseStatusException.class, () -> {
             moneyRequestService.updateRequestStatus("1", "DECLINED");
         });
         assertTrue(exception.getMessage().contains("already processed"));
@@ -143,7 +144,7 @@ public class MoneyRequestServiceTest {
     void testUpdateRequestStatus_RequestNotFound() {
         when(moneyRequestRepository.findById("1")).thenReturn(Optional.empty());
 
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+        Exception exception = assertThrows(ResponseStatusException.class, () -> {
             moneyRequestService.updateRequestStatus("1", "APPROVED");
         });
         assertTrue(exception.getMessage().contains("not found"));
@@ -155,7 +156,7 @@ public class MoneyRequestServiceTest {
         when(moneyRequestRepository.findById("1")).thenReturn(Optional.of(request));
         when(bankAccountRepository.findById("toId")).thenReturn(Optional.empty());
 
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+        Exception exception = assertThrows(ResponseStatusException.class, () -> {
             moneyRequestService.updateRequestStatus("1", "APPROVED");
         });
         assertTrue(exception.getMessage().contains("Bank account not found"));
@@ -171,7 +172,7 @@ public class MoneyRequestServiceTest {
         when(bankAccountRepository.findById("toId")).thenReturn(Optional.of(sender)); // sender exists
         when(bankAccountRepository.findById("fromId")).thenReturn(Optional.empty());  // receiver missing
 
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+        Exception exception = assertThrows(ResponseStatusException.class, () -> {
             moneyRequestService.updateRequestStatus("1", "APPROVED");
         });
 
