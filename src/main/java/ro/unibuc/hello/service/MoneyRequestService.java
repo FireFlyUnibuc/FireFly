@@ -63,8 +63,8 @@ public class MoneyRequestService {
         MoneyRequest request = existingRequest.get();
 
         if (!request.getStatus().equals("PENDING")) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bank account not found.");
-        }
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Money request is already processed.");
+        }        
 
         request.setStatus(status);
         moneyRequestRepository.save(request);
