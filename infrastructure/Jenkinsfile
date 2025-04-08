@@ -22,9 +22,8 @@ pipeline {
                     PATCH_VERSION = sh([script: 'git tag | cut -d . -f 3', returnStdout: true]).trim()
                 }
                 sh "docker build -t mariamedeea24/hello-img:${MAJOR_VERSION}.\$((${MINOR_VERSION} + 1)).${PATCH_VERSION} ."
-                docker login docker.io -u mariamedeea24 -p Devops101
-                ## Publish the new image to a public repository
-                docker push mariamedeea24/hello-img:$IMAGE_VERSION
+                sh "docker login docker.io -u mariamedeea24 -p Devops101"
+                sh "docker push mariamedeea24/hello-img:${MAJOR_VERSION}.\$((${MINOR_VERSION} + 1)).${PATCH_VERSION}"
             }
         }
     }
