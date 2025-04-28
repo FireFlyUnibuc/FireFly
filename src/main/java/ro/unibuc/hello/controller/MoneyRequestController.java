@@ -1,5 +1,7 @@
 package ro.unibuc.hello.controller;
 
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.annotation.Timed;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ro.unibuc.hello.entity.MoneyRequest;
@@ -13,13 +15,16 @@ import java.util.Optional;
 public class MoneyRequestController {
 
     private final MoneyRequestService moneyRequestService;
+    private final MeterRegistry meterRegistry;
 
     @Autowired
-    public MoneyRequestController(MoneyRequestService moneyRequestService) {
+    public MoneyRequestController(MoneyRequestService moneyRequestService, MeterRegistry meterRegistry) {
         this.moneyRequestService = moneyRequestService;
+        this.meterRegistry = meterRegistry;
     }
 
     @GetMapping
+    @Timed(value = "money_requests.get.all", description = "Time taken to get all money requests")
     public List<MoneyRequest> getAllRequests() {
         return moneyRequestService.getAllRequests();
     }
@@ -36,15 +41,16 @@ public class MoneyRequestController {
 
     @PostMapping
     public MoneyRequest createRequest(@RequestBody MoneyRequest request) {
+        meterRegistry.counter("money_requests.created.count").increment();
         return moneyRequestService.createRequest(request);
     }
 
     @PutMapping("/{id}/status")
     public MoneyRequest updateRequestStatus(@PathVariable String id, @RequestParam String status) {
         if (!status.equals("APPROVED") && !status.equals("DECLINED")) {
-            throw new IllegalArgumentException("Bank account not found.");
+            throw new IllegalArgumentException("Invalid status value.");
         }
+        meterRegistry.counter("money_requests.status.updated.count").increment();
         return moneyRequestService.updateRequestStatus(id, status);
     }
-
 }

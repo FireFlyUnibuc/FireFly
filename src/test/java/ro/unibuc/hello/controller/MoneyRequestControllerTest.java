@@ -8,6 +8,8 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import io.micrometer.core.instrument.MeterRegistry;
 import ro.unibuc.hello.entity.MoneyRequest;
 import ro.unibuc.hello.service.MoneyRequestService;
 
@@ -17,6 +19,7 @@ import java.util.Optional;
 
 import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -30,12 +33,17 @@ public class MoneyRequestControllerTest {
     @Mock
     private MoneyRequestService moneyRequestService;
 
+    @Mock
+    private MeterRegistry meterRegistry;
+
     @InjectMocks
     private MoneyRequestController moneyRequestController;
 
+    
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        when(meterRegistry.counter(anyString())).thenReturn(mock(io.micrometer.core.instrument.Counter.class));
         mockMvc = MockMvcBuilders.standaloneSetup(moneyRequestController).build();
     }
 

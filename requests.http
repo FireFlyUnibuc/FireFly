@@ -26,7 +26,7 @@ Authorization: None
 ### 3️⃣ Create a new bank account
 POST http://localhost:8080/api/bank-accounts
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjbGllbnQxQGV4YW1wbGUuY29tIiwiaWF0IjoxNzQyMzQ4NTQ1LCJleHAiOjE3NDIzODQ1NDV9.pTGE1K8WjH8W22JubMVFuSDF-sZPwCQv4lw_wbKnmqQ
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjbGllbnQxQGV4YW1wbGUuY29tIiwiaWF0IjoxNzQ1ODc3MTMyLCJleHAiOjE3NDU5MTMxMzJ9.sMFlVKiN9dCNVXV4QI_dYbADhqKsppPIN5h6rqSIzIY
 
 {
   "accountNumber": "1234567823",
@@ -69,8 +69,8 @@ Content-Type: application/json
 
 {
   "amount": 600,
-  "fromAccountId": "67da210e2d11ac2eb75c9e48",
-  "toAccountId": "67da20dc2d11ac2eb75c9e46"
+  "fromAccountId": "6810005b8b09bb734d552aea",
+  "toAccountId": "6810005b8b09bb734d552aea"
 }
 
 ### 🔹 19. Request Money from Another User
@@ -94,6 +94,9 @@ PUT http://localhost:8080/api/money-requests/67da22762d11ac2eb75c9e52/status?sta
 
 ### 🔹 Get all notifications
 GET http://localhost:8080/api/notifications
+
+### Get all transactions
+GET http://localhost:8080/api/transactions
 
 ### 🔹 23. Create a notification manually
 POST http://localhost:8080/api/notifications
